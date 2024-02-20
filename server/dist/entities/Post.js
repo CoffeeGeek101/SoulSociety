@@ -9,28 +9,52 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = void 0;
+exports.PostType = exports.Post = void 0;
 const core_1 = require("@mikro-orm/core");
+const type_graphql_1 = require("type-graphql");
 let Post = class Post {
 };
 exports.Post = Post;
 __decorate([
+    (0, type_graphql_1.Field)(),
     (0, core_1.PrimaryKey)(),
     __metadata("design:type", Number)
 ], Post.prototype, "id", void 0);
 __decorate([
+    (0, type_graphql_1.Field)(),
     (0, core_1.Property)(),
     __metadata("design:type", String)
 ], Post.prototype, "fullName", void 0);
 __decorate([
+    (0, type_graphql_1.Field)(),
     (0, core_1.Property)(),
     __metadata("design:type", String)
 ], Post.prototype, "email", void 0);
 __decorate([
+    (0, type_graphql_1.Field)(),
     (0, core_1.Property)(),
     __metadata("design:type", String)
 ], Post.prototype, "title", void 0);
 exports.Post = Post = __decorate([
+    (0, type_graphql_1.ObjectType)(),
     (0, core_1.Entity)()
 ], Post);
+let PostType = class PostType {
+};
+exports.PostType = PostType;
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], PostType.prototype, "fullName", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], PostType.prototype, "email", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], PostType.prototype, "title", void 0);
+exports.PostType = PostType = __decorate([
+    (0, type_graphql_1.InputType)()
+], PostType);
 //# sourceMappingURL=Post.js.map
