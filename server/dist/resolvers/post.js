@@ -33,26 +33,13 @@ let PostResolver = class PostResolver {
             return null;
         }
         ;
-        if (typeof updatePost.title !== "undefined") {
-            post.title = updatePost.title;
-        }
-        else {
-            post.title = post.title;
-        }
-        if (typeof updatePost.email !== "undefined") {
-            post.email = updatePost.email;
-        }
-        else {
-            post.email = post.email;
-        }
-        if (typeof updatePost.fullName !== "undefined") {
-            post.fullName = updatePost.fullName;
-        }
-        else {
-            post.fullName = post.fullName;
-        }
+        Object.assign(post, updatePost);
         await em.persistAndFlush(post);
         return post;
+    }
+    async deletePost(id, { em }) {
+        await em.nativeDelete(Post_1.Post, { id });
+        return true;
     }
 };
 exports.PostResolver = PostResolver;
@@ -88,6 +75,14 @@ __decorate([
     __metadata("design:paramtypes", [Number, Post_1.PostType, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "updatePost", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Boolean),
+    __param(0, (0, type_graphql_1.Arg)("id", () => type_graphql_1.Int)),
+    __param(1, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "deletePost", null);
 exports.PostResolver = PostResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], PostResolver);
