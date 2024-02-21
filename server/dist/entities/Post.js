@@ -43,16 +43,16 @@ let PostType = class PostType {
 };
 exports.PostType = PostType;
 __decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", String)
+    (0, type_graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", Object)
 ], PostType.prototype, "fullName", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", String)
+    (0, type_graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", Object)
 ], PostType.prototype, "email", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", String)
+    (0, type_graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", Object)
 ], PostType.prototype, "title", void 0);
 exports.PostType = PostType = __decorate([
     (0, type_graphql_1.InputType)()

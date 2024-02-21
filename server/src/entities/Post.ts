@@ -23,13 +23,13 @@ export class Post {
 
 @InputType()
 export class PostType implements Partial<Post> {
-   @Field()
-   fullName?: string;
+   @Field(() => String, { nullable: true })
+   fullName?: string | undefined;
 
-   @Field()
-   email?: string;
+   @Field(() => String, { nullable: true })
+   email?: string | undefined;
 
-   @Field()
-   title?: string;
+   @Field(() => String, { nullable: true })
+   title?: string | undefined;
 }
 

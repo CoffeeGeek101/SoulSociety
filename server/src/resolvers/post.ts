@@ -38,24 +38,18 @@ export class PostResolver {
       return null;
     };
 
-    if(typeof updatePost.title !== "undefined") {
-      post.title = updatePost.title;
-    }else{
-      post.title = post.title;
-    }
+    Object.assign(post, updatePost);
 
-    if(typeof updatePost.email !== "undefined") {
-      post.email = updatePost.email;
-    }else{
-      post.email = post.email;
-    }
-
-    if(typeof updatePost.fullName !== "undefined") {
-      post.fullName = updatePost.fullName;
-    }else{
-      post.fullName = post.fullName;
-    }
     await em.persistAndFlush(post);
     return post
+  }
+
+  @Mutation(() => Boolean)
+  async deletePost(
+    @Arg("id", () => Int) id : number,
+    @Ctx() {em} : MyContext
+  ) : Promise<Boolean> {
+    await em.nativeDelete(Post, {id})
+    return true;
   }
 }
