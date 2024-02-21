@@ -8,9 +8,10 @@ const constant_1 = require("./constant");
 const Post_1 = require("./entities/Post");
 const postgresql_1 = require("@mikro-orm/postgresql");
 const migrations_1 = require("@mikro-orm/migrations");
+const User_1 = require("./entities/User");
 exports.default = (0, postgresql_1.defineConfig)({
     extensions: [migrations_1.Migrator],
-    entities: [Post_1.Post],
+    entities: [Post_1.Post, User_1.User],
     dbName: "stack_db",
     debug: (!constant_1.__prod__),
     password: "2001",
