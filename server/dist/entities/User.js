@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserType = exports.User = void 0;
+exports.UserResponse = exports.FieldError = exports.UserType = exports.User = void 0;
 const core_1 = require("@mikro-orm/core");
 const type_graphql_1 = require("type-graphql");
 let User = class User {
@@ -61,4 +61,32 @@ __decorate([
 exports.UserType = UserType = __decorate([
     (0, type_graphql_1.InputType)()
 ], UserType);
+let FieldError = class FieldError {
+};
+exports.FieldError = FieldError;
+__decorate([
+    (0, type_graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], FieldError.prototype, "field", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], FieldError.prototype, "message", void 0);
+exports.FieldError = FieldError = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], FieldError);
+let UserResponse = class UserResponse {
+};
+exports.UserResponse = UserResponse;
+__decorate([
+    (0, type_graphql_1.Field)(() => [FieldError], { nullable: true }),
+    __metadata("design:type", Array)
+], UserResponse.prototype, "errors", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => User, { nullable: true }),
+    __metadata("design:type", User)
+], UserResponse.prototype, "user", void 0);
+exports.UserResponse = UserResponse = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], UserResponse);
 //# sourceMappingURL=User.js.map

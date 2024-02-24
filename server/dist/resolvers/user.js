@@ -21,19 +21,78 @@ const type_graphql_1 = require("type-graphql");
 const argon2_1 = __importDefault(require("argon2"));
 class UserResolver {
     async registerUser(userdata, { em }) {
+        if (userdata.username.length < 2) {
+            return {
+                errors: [{
+                        field: "username",
+                        message: "Username length must be greater than 2"
+                    }]
+            };
+        }
+        if (userdata.password.length < 5) {
+            return {
+                errors: [{
+                        field: "password",
+                        message: "Password length must be greater than 5"
+                    }]
+            };
+        }
         const hashedPassword = await argon2_1.default.hash(userdata.password);
         const user = em.create(User_1.User, { username: userdata.username, password: hashedPassword });
-        await em.persistAndFlush(user);
-        return user;
+        try {
+            await em.persistAndFlush(user);
+        }
+        catch (err) {
+            if (err.code === "23505") {
+                return {
+                    errors: [{
+                            field: "username",
+                            message: "Username already exists"
+                        }]
+                };
+            }
+        }
+        return { user: user };
+    }
+    async loginUser(userdata, { em }) {
+        const user = await em.findOne(User_1.User, { username: userdata.username });
+        if (!user) {
+            return {
+                errors: [{
+                        field: "username",
+                        message: "Username does not exist"
+                    }]
+            };
+        }
+        const hashedPassword = await argon2_1.default.verify(user.password, userdata.password);
+        if (!hashedPassword) {
+            return {
+                errors: [{
+                        field: "password",
+                        message: "Incorrect password"
+                    }]
+            };
+        }
+        return {
+            user: user
+        };
     }
 }
 exports.UserResolver = UserResolver;
 __decorate([
-    (0, type_graphql_1.Mutation)(() => User_1.User),
+    (0, type_graphql_1.Mutation)(() => User_1.UserResponse),
     __param(0, (0, type_graphql_1.Arg)("userdata")),
     __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [User_1.UserType, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "registerUser", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => User_1.UserResponse),
+    __param(0, (0, type_graphql_1.Arg)("userdata")),
+    __param(1, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [User_1.UserType, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "loginUser", null);
 //# sourceMappingURL=user.js.map
