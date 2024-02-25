@@ -10,14 +10,14 @@ export class User {
 
    @Field(() => String)
    @Property({type : 'date'})
-   createdAt?: Date = new Date();
+   createdAt?: Date = new Date();  // This is a default value, if the user does not pass the value, this will be the default value
 
    @Field(() => String)
    @Property({type : 'date', onUpdate : () => new Date()})
    updatedAt?: Date = new Date();
 
    @Field()
-   @Property({type : 'text', unique : true})
+   @Property({type : 'text', unique : true})  // unique is used to make the column unique
     username!: string;
    
    @Property({type : 'text'})
@@ -34,6 +34,7 @@ export class UserType implements Partial<User> {
     password!: string;
 }
 
+// This is used to return the error message to the user
 @ObjectType()
 export class FieldError {
     @Field(() => String, {nullable : true})
@@ -42,7 +43,7 @@ export class FieldError {
     message ?: string
 }
 
-
+// This is used to return the user and the error message to the user, as an object
 @ObjectType()
 export class UserResponse {
     @Field(() => [FieldError], {nullable : true})

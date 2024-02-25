@@ -8,7 +8,7 @@ export class UserResolver {
     async registerUser(
         @Arg("userdata") userdata : UserType,
         @Ctx() {em, req} : MyContext
-    ) : Promise<UserResponse> {
+    ) : Promise<UserResponse> {       // we are expecting a promise of UserResponse not user because we are returning an object with user and error message
 
         if(userdata.username.length < 2) {
             return {
@@ -27,14 +27,16 @@ export class UserResolver {
                 }]
             }
         }
-        
+        // we are hashing the password
         const hashedPassword = await argon2.hash(userdata.password)
+
+        // then adding the user to the database
         const user = em.create(User, { username : userdata.username, password : hashedPassword})
         try{
             await em.persistAndFlush(user);
         } catch(err) {
             // duplicate username error
-            if(err.code === "23505") {
+            if(err.code === "23505") {     // 23505 is the error code for duplicate username, coming from DB
                 return {
                     errors : [{
                         field : "username",
@@ -44,7 +46,7 @@ export class UserResolver {
             }
         }
 
-        req.session.userId = user.id;
+        req.session.userId = user.id;   // setting the session id to the user id, for cookies
 
         return {user : user};
     }
@@ -56,7 +58,7 @@ export class UserResolver {
         if(!req.session.userId) {
             return null;
         }
-        const user = await em.findOne(User, {id : req.session.userId});
+        const user = await em.findOne(User, {id : req.session.userId});   // reads the cookie and finds the user
         return user;
     }
 
@@ -65,28 +67,28 @@ export class UserResolver {
         @Arg("userdata") userdata : UserType,
         @Ctx() {em, req} : MyContext
     ) : Promise<UserResponse> {
-
+        // finding the user, based on the username
         const user = await em.findOne(User, {username : userdata.username});
         if(!user){
             return {
                 errors : [{
-                    field : "username",
+                    field : "username",                                 // validating if the username exists
                     message : "Username does not exist"
                 }]
             }
         }
-
+        // we are verifying the password
         const hashedPassword = await argon2.verify(user.password, userdata.password);
 
         if(!hashedPassword) {
             return {
                 errors : [{
-                    field : "password",
+                    field : "password",                                 // validating if the password is correct
                     message : "Incorrect password"
                 }]
             }
         }
-        req.session.userId = user.id;
+        req.session.userId = user.id;  // setting the session id to the user id, for cookies
 
         return {
             user : user

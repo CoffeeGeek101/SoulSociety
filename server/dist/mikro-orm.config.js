@@ -14,7 +14,7 @@ exports.default = (0, postgresql_1.defineConfig)({
     entities: [Post_1.Post, User_1.User],
     dbName: "stack_db",
     debug: (!constant_1.__prod__),
-    password: "2001",
+    password: constant_1.db_password,
     allowGlobalContext: true,
     migrations: {
         path: path_1.default.join(__dirname, './migrations'),
