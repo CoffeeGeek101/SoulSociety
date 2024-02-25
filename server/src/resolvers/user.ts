@@ -1,13 +1,13 @@
 import { User, UserResponse, UserType } from "../entities/User";
 import { MyContext } from "../types";
-import { Arg, Ctx, Mutation } from "type-graphql";
+import { Arg, Ctx, Mutation, Query } from "type-graphql";
 import argon2 from 'argon2';
 
 export class UserResolver {
     @Mutation(() => UserResponse) 
     async registerUser(
         @Arg("userdata") userdata : UserType,
-        @Ctx() {em} : MyContext
+        @Ctx() {em, req} : MyContext
     ) : Promise<UserResponse> {
 
         if(userdata.username.length < 2) {
@@ -43,13 +43,27 @@ export class UserResolver {
                 }
             }
         }
+
+        req.session.userId = user.id;
+
         return {user : user};
+    }
+
+    @Query(() => User, {nullable : true})
+    async me(
+        @Ctx() {req,em} : MyContext
+    ) : Promise<User | null> {
+        if(!req.session.userId) {
+            return null;
+        }
+        const user = await em.findOne(User, {id : req.session.userId});
+        return user;
     }
 
     @Mutation(() => UserResponse) 
     async loginUser(
         @Arg("userdata") userdata : UserType,
-        @Ctx() {em} : MyContext
+        @Ctx() {em, req} : MyContext
     ) : Promise<UserResponse> {
 
         const user = await em.findOne(User, {username : userdata.username});
@@ -72,6 +86,8 @@ export class UserResolver {
                 }]
             }
         }
+        req.session.userId = user.id;
+
         return {
             user : user
         }

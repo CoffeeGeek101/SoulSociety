@@ -20,7 +20,7 @@ const User_1 = require("../entities/User");
 const type_graphql_1 = require("type-graphql");
 const argon2_1 = __importDefault(require("argon2"));
 class UserResolver {
-    async registerUser(userdata, { em }) {
+    async registerUser(userdata, { em, req }) {
         if (userdata.username.length < 2) {
             return {
                 errors: [{
@@ -52,9 +52,17 @@ class UserResolver {
                 };
             }
         }
+        req.session.userId = user.id;
         return { user: user };
     }
-    async loginUser(userdata, { em }) {
+    async me({ req, em }) {
+        if (!req.session.userId) {
+            return null;
+        }
+        const user = await em.findOne(User_1.User, { id: req.session.userId });
+        return user;
+    }
+    async loginUser(userdata, { em, req }) {
         const user = await em.findOne(User_1.User, { username: userdata.username });
         if (!user) {
             return {
@@ -73,6 +81,7 @@ class UserResolver {
                     }]
             };
         }
+        req.session.userId = user.id;
         return {
             user: user
         };
@@ -87,6 +96,13 @@ __decorate([
     __metadata("design:paramtypes", [User_1.UserType, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "registerUser", null);
+__decorate([
+    (0, type_graphql_1.Query)(() => User_1.User, { nullable: true }),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "me", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => User_1.UserResponse),
     __param(0, (0, type_graphql_1.Arg)("userdata")),

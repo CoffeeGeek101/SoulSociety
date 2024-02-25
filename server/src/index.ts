@@ -8,36 +8,59 @@ import { buildSchema } from "type-graphql";
 import { GraphQLStarter } from "./resolvers/graphStarter";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
+import RedisStore from "connect-redis";
+import session from "express-session";
+import { createClient } from "redis";
+import { MyContext } from "./types";
 
 const main = async () => {
   const orm = await MikroORM.init(mikroConfig);
   await orm.getMigrator().up();
 
+  let redisClient = createClient();
+  redisClient.connect().catch(console.error);
+
+  let redisStore = new RedisStore({
+    client: redisClient,
+    prefix: "bankai:",
+    disableTouch: true
+  });
+
   const app = express();
 
+  app.use(
+    session({
+      store : redisStore,
+      secret: "hello_world",
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+        httpOnly: true, // JS frontend cannot access the cookie
+        sameSite: "lax", // csrf protection
+        secure: __prod__,
+      },
+      saveUninitialized: false,
+      resave: false,
+    })
+  )
+
   const apolloServer = new ApolloServer({
-    schema : await buildSchema({
-      resolvers:[GraphQLStarter, PostResolver, UserResolver],
-      validate:false
+    schema: await buildSchema({
+      resolvers: [GraphQLStarter, PostResolver, UserResolver],
+      validate: false,
     }),
-    context: () => ({em: orm.em})
-  })
+    context: ({req, res}) : MyContext => ({ em: orm.em, req, res }),
+  });
   await apolloServer.start();
-  apolloServer.applyMiddleware({app});
+  apolloServer.applyMiddleware({ app, cors: {
+    origin: "https://studio.apollographql.com",
+    credentials: true
+  } });
 
-  // await orm.migrator.up();
-  // const creat_post = orm.em.create(Post, {fullName: "my first post", email:"a@gmail.com", title:"dummy add"});
-  // await orm.em.persistAndFlush(creat_post);
-
-  // const post = await orm.em.find(Post, {});
-  // console.log(post)
-
-  app.listen(4000, ()=>{
+  app.listen(4000, () => {
     console.log("Server started on localhost:4000");
-  })
-
+  });
 };
 
 main().catch((err) => {
-  console.log(err)
+  console.log(err);
 });
