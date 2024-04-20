@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Syne } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/utils/classmerger";
 
 const inter = Inter({ subsets: ["latin"] });
+const syne = Syne({ subsets: ["latin", "greek", "latin-ext"] });
 
 export const metadata: Metadata = {
   title: "Soul Scocity",
@@ -16,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={cn('bg-slate-950', syne.className)} >{children}</body>
     </html>
   );
 }
