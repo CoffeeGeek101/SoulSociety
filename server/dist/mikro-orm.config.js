@@ -12,7 +12,7 @@ const User_1 = require("./entities/User");
 exports.default = (0, postgresql_1.defineConfig)({
     extensions: [migrations_1.Migrator],
     entities: [Post_1.Post, User_1.User],
-    dbName: "stack_db",
+    dbName: constant_1.db_name,
     debug: (!constant_1.__prod__),
     password: constant_1.db_password,
     allowGlobalContext: true,
