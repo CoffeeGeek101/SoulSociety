@@ -5,9 +5,11 @@ import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 // This is a resolver for the Post entity
 @Resolver() // This is a resolver decorator
 
-export class PostResolver {
+export class PostResolver { 
+  // [Post] is an array of the Post, in the context of graphql it means that the resolver will return an array of the Post
   @Query(() => [Post])
-  posts(@Ctx() { em }: MyContext): Promise<Post[]> {
+  // Post[] is an array of Post in context of typescript, so baically [Post] and Post[] are the same thing
+  posts(@Ctx() { em } : MyContext): Promise<Post[]> {
     return em.find(Post, {});
   }
 

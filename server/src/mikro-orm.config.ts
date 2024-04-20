@@ -1,5 +1,5 @@
 import path from "path";
-import { __prod__, db_password } from "./constant";
+import { __prod__, db_password, db_name } from "./constant";
 import { Post } from "./entities/Post";
 import { defineConfig } from "@mikro-orm/postgresql";
 import { Migrator } from "@mikro-orm/migrations"
@@ -8,7 +8,7 @@ import { User } from "./entities/User";
 export default defineConfig({
     extensions: [Migrator],
     entities: [Post, User],  //Add the entities, they are like the tables in the database
-    dbName: "stack_db",
+    dbName: db_name,
     debug: (!__prod__),
     password: db_password, 
     allowGlobalContext: true,
