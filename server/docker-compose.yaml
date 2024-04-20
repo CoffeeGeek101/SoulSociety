@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "2001"
+      POSTGRES_DB: "stack_db"
+    ports:
+      - "5433:5432"
+  
+  nodejs_server:
+    image : node-emp
+    depends_on:
+      - postgresql
+    ports:
+      - "8001:4000"
